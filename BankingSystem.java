@@ -18,67 +18,47 @@ class Account {
         accounts.add(this);
     }
 
-    static boolean exist(long accountNumber) {
+    static Account search(long accountNumber) {
         for (int i = 0; i < accounts.size(); i++) {
-            if (accounts.get(i).accountNumber == accountNumber) {
-                return true;
+            Account account = accounts.get(i);
+            if (account.accountNumber == accountNumber) {
+                return account;
             }
         }
-        return false;
+        return null;
     }
 
-    static void deposit(long accountNumber, double amount) {
-        int i;
-        for (i = 0; i < accounts.size(); i++) {
-            if (accounts.get(i).accountNumber == accountNumber) {
-                break;
-            }
-        }
-        accounts.get(i).balance += amount;
+    static void deposit(Account account, double amount) {
+        account.balance += amount;
     }
 
-    static boolean withdraw(long accountNumber, double amount) {
-        int i;
-        for (i = 0; i < accounts.size(); i++) {
-            if (accounts.get(i).accountNumber == accountNumber) {
-                break;
-            }
-        }
-
-        if (amount > accounts.get(i).balance) {
+    static boolean withdraw(Account account, double amount) {
+        if (amount <= 0 || amount > account.balance) {
             return false;
         }
 
-        accounts.get(i).balance -= amount;
+        account.balance -= amount;
         return true;
     }
 
-    static double getBalance(long accountNumber) {
-        int i;
-        for (i = 0; i < accounts.size(); i++) {
-            if (accounts.get(i).accountNumber == accountNumber) {
-                break;
-            }
-        }
-        return accounts.get(i).balance;
+    static double getBalance(Account account) {
+        return account.balance;
     }
 
-    static void transfer(long source, long destination, double amount) {
-        withdraw(source, amount);
-        deposit(destination, amount);
-    }
-
-    static void displayDetails(long accountNumber) {
-        int i;
-        for (i = 0; i < accounts.size(); i++) {
-            if (accounts.get(i).accountNumber == accountNumber) {
-                break;
-            }
+    static boolean transfer(Account source, Account destination, double amount) {
+        if (withdraw(source, amount)) {
+            deposit(destination, amount);
+            return true;
         }
 
-        System.out.println("Account Number: " + accounts.get(i).accountNumber);
-        System.out.println("Name: " + accounts.get(i).name);
-        System.out.println("Balance: " + accounts.get(i).balance);
+        return false;
+    }
+
+    static void displayDetails(Account account) {
+        System.out.println();
+        System.out.println("Account Number: " + account.accountNumber);
+        System.out.println("Name: " + account.name);
+        System.out.println("Balance: " + account.balance);
     }
 
 }
@@ -86,6 +66,9 @@ class Account {
 public class BankingSystem {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+        long accountNumber;
+        double amount;
+        Account account;
         while (true) {
             System.out.println("1. Create Account");
             System.out.println("2. Deposit Money");
@@ -96,16 +79,16 @@ public class BankingSystem {
             System.out.println("99. Exit");
             System.out.print(">> ");
             int choice = sc.nextInt();
-            long accountNumber;
-            double amount;
+
             switch (choice) {
                 case 1:
                     System.out.print("Enter account number: ");
                     accountNumber = sc.nextLong();
                     sc.nextLine();
 
-                    if (Account.exist(accountNumber)) {
-                        System.out.println("Account already exists!");
+                    account = Account.search(accountNumber);
+                    if (account != null) {
+                        System.out.println("\nAccount already exists!");
                         break;
                     }
 
@@ -114,15 +97,16 @@ public class BankingSystem {
 
                     new Account(accountNumber, name);
 
-                    System.out.println("Account created successfully.");
+                    System.out.println("\nAccount created successfully.");
                     break;
 
                 case 2:
                     System.out.print("Enter account number: ");
                     accountNumber = sc.nextLong();
 
-                    if (!Account.exist(accountNumber)) {
-                        System.out.println("Account does not exist!");
+                    account = Account.search(accountNumber);
+                    if (account == null) {
+                        System.out.println("\nAccount does not exist!");
                         break;
                     }
 
@@ -130,21 +114,22 @@ public class BankingSystem {
                     amount = sc.nextDouble();
 
                     if (amount <= 0) {
-                        System.out.println("Amount must be greater than 0.");
+                        System.out.println("\nAmount must be greater than 0.");
                         break;
                     }
 
-                    Account.deposit(accountNumber, amount);
+                    Account.deposit(account, amount);
 
-                    System.out.println("Deposit successful.");
+                    System.out.println("\nDeposit successful.");
                     break;
 
                 case 3:
                     System.out.print("Enter account number: ");
                     accountNumber = sc.nextLong();
 
-                    if (!Account.exist(accountNumber)) {
-                        System.out.println("Account does not exist!");
+                    account = Account.search(accountNumber);
+                    if (account == null) {
+                        System.out.println("\nAccount does not exist!");
                         break;
                     }
 
@@ -152,14 +137,14 @@ public class BankingSystem {
                     amount = sc.nextDouble();
 
                     if (amount <= 0) {
-                        System.out.println("Amount must be greater than 0.");
+                        System.out.println("\nAmount must be greater than 0.");
                         break;
                     }
 
-                    if (Account.withdraw(accountNumber, amount)) {
-                        System.out.println("Withdraw successful.");
+                    if (Account.withdraw(account, amount)) {
+                        System.out.println("\nWithdraw successful.");
                     } else {
-                        System.out.println("Insufficient balance!");
+                        System.out.println("\nInsufficient balance!");
                     }
                     break;
 
@@ -167,28 +152,31 @@ public class BankingSystem {
                     System.out.print("Enter account number: ");
                     accountNumber = sc.nextLong();
 
-                    if (!Account.exist(accountNumber)) {
-                        System.out.println("Account does not exist!");
+                    account = Account.search(accountNumber);
+                    if (account == null) {
+                        System.out.println("\nAccount does not exist!");
                         break;
                     }
 
-                    System.out.println("Fetched Balance: " + Account.getBalance(accountNumber));
+                    System.out.println("\nFetched Balance: " + Account.getBalance(account));
                     break;
 
                 case 5:
                     System.out.print("Enter your account number: ");
-                    long source = sc.nextLong();
+                    long sourceAccountNumber = sc.nextLong();
 
-                    if (!Account.exist(source)) {
-                        System.out.println("Account does not exist!");
+                    Account sourceAccount = Account.search(sourceAccountNumber);
+                    if (sourceAccount == null) {
+                        System.out.println("\nAccount does not exist!");
                         break;
                     }
 
                     System.out.print("Enter recipient account number: ");
-                    long destination = sc.nextLong();
+                    long destinationAccountNumber = sc.nextLong();
 
-                    if (!Account.exist(destination)) {
-                        System.out.println("Account does not exist!");
+                    Account destinationAccount = Account.search(destinationAccountNumber);
+                    if (destinationAccount == null) {
+                        System.out.println("\nAccount does not exist!");
                         break;
                     }
 
@@ -196,34 +184,41 @@ public class BankingSystem {
                     amount = sc.nextDouble();
 
                     if (amount <= 0) {
-                        System.out.println("Amount must be greater than 0.");
+                        System.out.println("\nAmount must be greater than 0.");
                         break;
                     }
 
-                    Account.transfer(source, destination, amount);
+                    if (Account.transfer(sourceAccount, destinationAccount, amount)) {
+                        System.out.println("\nAccount transfer successful.");
+                    } else {
+                        System.out.println("\nInsufficient balance!");
+                    }
 
-                    System.out.println("Account transfer successful.");
                     break;
 
                 case 6:
                     System.out.print("Enter account number: ");
                     accountNumber = sc.nextLong();
 
-                    if (!Account.exist(accountNumber)) {
-                        System.out.println("Account does not exist!");
+                    account = Account.search(accountNumber);
+                    if (account == null) {
+                        System.out.println("\nAccount does not exist!");
                         break;
                     }
 
-                    Account.displayDetails(accountNumber);
+                    Account.displayDetails(account);
                     break;
 
                 case 99:
+                    sc.close();
                     return;
+
                 default:
                     System.out.println("Invalid choice!");
             }
 
             System.out.println();
+
         }
     }
 }
