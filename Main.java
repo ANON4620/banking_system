@@ -49,7 +49,7 @@ class Main {
                     System.out.print("Enter name: ");
                     String name = sc.nextLine();
 
-                    accounts.add(new Account(accountNumber, name));
+                    accounts.add(new Account(accountNumber, name, 0));
 
                     System.out.println("\nAccount created successfully.");
                     break;
