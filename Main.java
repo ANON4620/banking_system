@@ -23,6 +23,8 @@ class Main {
         double amount;
         Account account;
 
+        AccountNumberGenerator ang = new AccountNumberGenerator(1111);
+
         while (true) {
             System.out.println("1. Create Account");
             System.out.println("2. Deposit Money");
@@ -36,15 +38,9 @@ class Main {
 
             switch (choice) {
                 case 1:
-                    System.out.print("Enter account number: ");
-                    accountNumber = sc.nextLong();
-                    sc.nextLine();
+                    accountNumber = ang.generate();
 
-                    account = findAccount(accountNumber);
-                    if (account != null) {
-                        System.out.println("\nAccount already exists!");
-                        break;
-                    }
+                    sc.nextLine(); // To flush \n from input buffer
 
                     System.out.print("Enter name: ");
                     String name = sc.nextLine();
@@ -52,6 +48,7 @@ class Main {
                     accounts.add(new Account(accountNumber, name, 0));
 
                     System.out.println("\nAccount created successfully.");
+                    System.out.println("Account number: " + accountNumber);
                     break;
 
                 case 2:
