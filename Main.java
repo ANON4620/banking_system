@@ -29,9 +29,10 @@ class Main {
             System.out.println("1. Create Account");
             System.out.println("2. Deposit Money");
             System.out.println("3. Withdraw Money");
-            System.out.println("4. Check Balance");
+            System.out.println("4. View Balance");
             System.out.println("5. Transfer Money");
             System.out.println("6. Display Details");
+            System.out.println("7. View Transaction History");
             System.out.println("99. Exit");
             System.out.print(">> ");
             int choice = sc.nextInt();
@@ -157,7 +158,22 @@ class Main {
                         break;
                     }
 
+                    System.out.println();
                     account.displayDetails();
+                    break;
+
+                case 7:
+                    System.out.print("Enter account number: ");
+                    accountNumber = sc.nextLong();
+
+                    account = findAccount(accountNumber);
+                    if (account == null) {
+                        System.out.println("\nAccount does not exist!");
+                        break;
+                    }
+
+                    System.out.println();
+                    account.displayTransactions();
                     break;
 
                 case 99:
