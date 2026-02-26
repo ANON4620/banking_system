@@ -15,6 +15,7 @@ public class Account {
     }
 
     public void deposit(double amount) {
+        this.addTransaction(accountNumber, name, amount, "DEPOSIT");
         balance += amount;
     }
 
@@ -23,6 +24,7 @@ public class Account {
             return false;
         }
 
+        this.addTransaction(accountNumber, name, amount, "WITHDRAW");
         balance -= amount;
         return true;
     }
@@ -54,6 +56,7 @@ public class Account {
     public boolean transfer(Account destination, double amount) {
         if (withdraw(amount)) {
             destination.deposit(amount);
+
             this.addTransaction(destination.accountNumber, destination.name, amount, "SENT");
             destination.addTransaction(this.accountNumber, this.name, amount, "RECEIVED");
             return true;
