@@ -49,7 +49,7 @@ public class Account {
             return;
         }
 
-        System.out.printf("%-20s %20s %10s %10s\n", "Account Number", "Account Holder Name", "Amount", "Type");
+        System.out.printf("%-20s %20s %10s %10s %25s\n", "Account Number", "Account Holder Name", "Amount", "Type", "Date and Time");
 
         for (int i = transactions.size() - 1; i >= 0; i--) {
             Transaction transaction = transactions.get(i);
@@ -57,8 +57,9 @@ public class Account {
             String name = transaction.getName();
             String amount = String.valueOf(transaction.getAmount());
             String type = transaction.getType();
+            String dateAndTime = transaction.getDateAndTime();
 
-            System.out.printf("%-20s %20s %10s %10s\n", accountNumber, name, amount, type);
+            System.out.printf("%-20s %20s %10s %10s %25s\n", accountNumber, name, amount, type, dateAndTime);
         }
     }
 
