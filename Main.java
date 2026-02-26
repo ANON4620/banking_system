@@ -33,6 +33,7 @@ class Main {
             System.out.println("5. Transfer Money");
             System.out.println("6. Display Details");
             System.out.println("7. View Transaction History");
+            System.out.println("8. Close Account!");
             System.out.println("99. Exit");
             System.out.print(">> ");
             int choice = sc.nextInt();
@@ -179,6 +180,27 @@ class Main {
 
                     System.out.println();
                     account.displayTransactions();
+                    break;
+
+                case 8:
+                    System.out.print("Enter account number: ");
+                    accountNumber = sc.nextLong();
+
+                    account = findAccount(accountNumber);
+                    if (account == null) {
+                        System.out.println("\nAccount does not exist!");
+                        break;
+                    }
+
+                    System.out.print("\nAre you sure you want to close this account permanently? (Y/n): ");
+                    char answer = sc.next().charAt(0);
+                    if (answer == 'Y' || answer == 'y') {
+                        accounts.remove(account);
+                        System.out.println("Account closed successfully.");
+                    } else {
+                        System.out.println("Aborted.");
+                    }
+
                     break;
 
                 case 99:
