@@ -71,6 +71,7 @@ class Main {
                     }
 
                     account.deposit(amount);
+                    account.addTransaction(accountNumber, account.getName(), amount, "DEPOSIT");
 
                     System.out.println("\nDeposit successful.");
                     break;
@@ -95,6 +96,7 @@ class Main {
 
                     if (account.withdraw(amount)) {
                         System.out.println("\nWithdraw successful.");
+                        account.addTransaction(accountNumber, account.getName(), amount, "WITHDRAW");
                     } else {
                         System.out.println("\nInsufficient balance!");
                     }
@@ -141,6 +143,9 @@ class Main {
                     }
 
                     if (sourceAccount.transfer(destinationAccount, amount)) {
+                        sourceAccount.addTransaction(destinationAccountNumber, destinationAccount.getName(), amount, "SENT");
+                        destinationAccount.addTransaction(sourceAccountNumber, sourceAccount.getName(), amount, "RECEIVED");
+
                         System.out.println("\nAccount transfer successful.");
                     } else {
                         System.out.println("\nInsufficient balance!");
